@@ -26,15 +26,19 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: "18"
+          cache: 'yarn'
       
       - name: Setup Pages
         uses: actions/configure-pages@v4
       
+      - name: Install Yarn
+        run: npm install -g yarn
+      
       - name: Install dependencies
-        run: npm ci --legacy-peer-deps
+        run: yarn install
       
       - name: Build with Next.js
-        run: npm run build
+        run: yarn build
       
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
@@ -44,3 +48,4 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
+
