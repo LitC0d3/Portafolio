@@ -1,4 +1,4 @@
-name: Deploy Next.js to GitHub Pages
+name: Deploy to GitHub Pages
 
 on:
   push:
@@ -30,10 +30,24 @@ jobs:
       - name: Setup Pages
         uses: actions/configure-pages@v4
       
-      - name: Clean environment
+      - name: Create new Next.js project
         run: |
-          rm -rf node_modules
-          rm -f package-lock.json
+          # Guardar archivos importantes
+          mkdir -p /tmp/portfolio-backup
+          cp -r app components lib public /tmp/portfolio-backup/
+          cp tailwind.config.ts next.config.mjs /tmp/portfolio-backup/
+          
+          # Crear nuevo proyecto
+          npx create-next-app@14.0.3 temp-portfolio --typescript --tailwind --eslint --app --src-dir --import-alias "@/*"
+          
+          # Restaurar archivos
+          rm -rf temp-portfolio/app temp-portfolio/components
+          cp -r /tmp/portfolio-backup/* temp-portfolio/
+          
+          # Mover al directorio principal
+          mv temp-portfolio/* .
+          mv temp-portfolio/.* . 2>/dev/null || true
+          rm -rf temp-portfolio
       
       - name: Install dependencies
         run: npm install
@@ -49,3 +63,4 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
+
